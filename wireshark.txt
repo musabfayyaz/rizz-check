@@ -1,0 +1,93 @@
+
+---------------------------------------------------------------------
+STEPS TO SHOW TCP 3-WAY HANDSHAKE (LOCALLY)
+---------------------------------------------------------------------
+
+Since you cannot use the internet, you must use the
+**Loopback Interface** (traffic stays inside your computer).
+
+You can use **Nmap** (from Lab 4) to generate traffic
+while **Wireshark** captures it.
+
+>>> WRITE THESE STEPS ON YOUR EXAM PAPER <<<
+
+-------------------------------------------------
+STEP 1: SELECT THE CORRECT INTERFACE
+-------------------------------------------------
+- Open Wireshark
+- From the capture list, select:
+  "Adapter for loopback traffic capture"
+
+- Reason:
+  Captures traffic your computer sends to itself (localhost)
+  No internet cable or Wi-Fi required
+
+-------------------------------------------------
+STEP 2: START CAPTURING
+-------------------------------------------------
+- Click the **Blue Shark Fin** icon (Start Capture)
+
+-------------------------------------------------
+STEP 3: GENERATE TCP TRAFFIC (THE TRIGGER)
+-------------------------------------------------
+- Open Terminal (Command Prompt / PowerShell)
+- Run a command that forces a TCP connection
+  to your own machine
+
+COMMAND:
+---------
+nmap -sT 127.0.0.1
+
+EXPLANATION:
+------------
+- 127.0.0.1 = Localhost (your own machine)
+- -sT = TCP Connect Scan
+- Forces a full TCP 3-Way Handshake
+
+ALTERNATIVE (IF NMAP IS UNAVAILABLE):
+------------------------------------
+- ssh 127.0.0.1
+- OR open a browser and go to:
+  http://127.0.0.1
+  (only works if a local web server is running)
+
+-------------------------------------------------
+STEP 4: STOP CAPTURING
+-------------------------------------------------
+- Click the **Red Square** icon in Wireshark
+
+-------------------------------------------------
+STEP 5: APPLY THE HANDSHAKE FILTER
+-------------------------------------------------
+- In the filter bar, type:
+
+  tcp.flags.syn == 1 || tcp.flags.ack == 1
+
+- Better filter for clarity:
+  tcp.port == 80
+  (or whichever port you scanned)
+
+-------------------------------------------------
+STEP 6: ANALYZE THE OUTPUT (THE 3 STEPS)
+-------------------------------------------------
+
+Look for THREE packets in order
+between the same two ports:
+
+1) SYN
+------
+- Source -> Destination
+- [SYN] flag set
+- Client says: "Let's connect"
+
+2) SYN, ACK
+-----------
+- Destination -> Source
+- [SYN, ACK] flags set
+- Server says: "I hear you, let's connect"
+
+3) ACK
+------
+- Source -> Destination
+- [ACK] flag set
+- Client says: "Connection established"
